@@ -1,40 +1,47 @@
 <template>
   <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        quiz-question-admin
-      </h1>
-      <h2 class="subtitle">
-        Admin module for questions controlling
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+    <b-card >
+      <b-card-body >
+        <b-form @submit.prevent="login">
+            <b-input v-model="email" class="col-sm-12" id="inline-form-input-username" placeholder="Username"></b-input>
+          <b-input v-model="password" type="password" id="text-password" placeholder="Password" aria-describedby="password-help-block"></b-input>
+          <b-button type="submit" class="col-sm-12">Login</b-button>
+        </b-form>
+      </b-card-body>
+    </b-card>
+
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-
+import firebase from 'firebase'
 export default {
+    name:'login',
   components: {
-    Logo
-  }
+
+  },
+    data(){
+      return{
+          email:'',
+          password :'',
+          isLoading : false
+      }
+    },
+    methods:{
+      login(){
+          firebase.auth().signInWithEmailAndPassword(this.email,this.password).then((result)=>{
+              this.$router.push('/add-question');
+             alert("Login Success")
+          }).catch((result)=>{
+              alert("Failed")
+          });
+      }
+    },
+    created() {
+        firebase.auth().onAuthStateChanged(()=> {
+            this.$route.push('/add-question');
+        })
+    }
 }
 </script>
 
@@ -47,26 +54,11 @@ export default {
   align-items: center;
   text-align: center;
 }
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
+  input{
+    margin-top: 10px;
+    width: 100%;
+  }
+  button{
+    margin-top: 14px;
+  }
 </style>
