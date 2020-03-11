@@ -30,8 +30,10 @@ export default {
     methods:{
       login(){
           firebase.auth().signInWithEmailAndPassword(this.email,this.password).then((result)=>{
-              this.$router.push('/add-question');
-             alert("Login Success")
+              this.$router.push({
+                  name:'add-question'
+              });
+              localStorage.setItem('useremail',this.email);
           }).catch((result)=>{
               alert("Failed")
           });

@@ -9,3 +9,5 @@ export const store = new Vuex.Store({
     password : ''
   }
 });
+
+export const baseURL = 'https://node-server-quiz.herokuapp.com/';

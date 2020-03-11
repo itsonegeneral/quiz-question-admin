@@ -6,22 +6,25 @@
       </b-card-header>
       <b-card-body class="col-sm-12">
         <b-form @submit.prevent="addQuestion">
-            <b-form-select v-model="selected" class="mb-3">
-              <b-form-select-option v-for="cat in categories" :value="cat">{{cat}}</b-form-select-option>
-            </b-form-select>
+          Parent Category : {{questionModel.parentCategory}}<br>
+          Sub Category : {{questionModel.category}}
+            <b-form-select v-model="questionModel.parentCategory" :options="categories"  class="mb-3" :value="categories" v-on:change="changeSubCategory()"/>
+          <b-form-select v-model="questionModel.category" :options="subcategories"  class="mb-3" :value="subcategories"/>
           <b-textarea placeholder="Question" v-model="questionModel.question"/>
-            <b-input v-model="questionModel.options[0]" placeholder="Option 1"/>
-          <b-input v-model="questionModel.options[1]" placeholder="Option 2"/>
-          <b-input v-model="questionModel.options[2]" placeholder="Option 3"/>
-          <b-input v-model="questionModel.options[3]" placeholder="Option 4"/>
-          {{questionModel.answer}}
+            <b-input v-model="questionModel.option1" placeholder="Option 1"/>
+          <b-input v-model="questionModel.option2" placeholder="Option 2"/>
+          <b-input v-model="questionModel.option3" placeholder="Option 3"/>
+          <b-input v-model="questionModel.option4" placeholder="Option 4"/>
           <div v-if="!isOptionsEntered">
-            <label>Select Answer</label>
+            <label>Select Answer : </label>
+
+            {{questionModel.answer}}
+
             <b-radio-group >
-              <b-radio  v-model="questionModel.answer" :value="questionModel.options[0]" class="col-sm-12" >{{questionModel.options[0]}}</b-radio>
-              <b-radio  v-model="questionModel.answer" :value="questionModel.options[1]" class="col-sm-12">{{questionModel.options[1]}}</b-radio>
-              <b-radio  v-model="questionModel.answer" :value="questionModel.options[2]" class="col-sm-12" >{{questionModel.options[2]}}</b-radio>
-              <b-radio  v-model="questionModel.answer" :value="questionModel.options[3]" class="col-sm-12">{{questionModel.options[3]}}</b-radio>
+              <b-radio  v-model="questionModel.answer" :value="questionModel.option1" class="col-sm-12" >{{questionModel.option1}}</b-radio>
+              <b-radio  v-model="questionModel.answer" :value="questionModel.option2" class="col-sm-12">{{questionModel.option2}}</b-radio>
+              <b-radio  v-model="questionModel.answer" :value="questionModel.option3" class="col-sm-12" >{{questionModel.option3}}</b-radio>
+              <b-radio  v-model="questionModel.answer" :value="questionModel.option4" class="col-sm-12">{{questionModel.option4}}</b-radio>
             </b-radio-group>
           </div>
 
@@ -38,67 +41,140 @@
 <script>
   import {firestore,realtimedb} from "../../plugins/firebase";
   import firebase from 'firebase';
-  import {store} from "../../store";
+  import {baseURL, store} from "../../store";
 
   export default {
-        name: "index.html",
+        name: "add-question",
         data(){
             return {
                 currentDatabase : '',
                 questionModel:{
                     question :'',
-                    options : [],
+                    option1 : '',
+                    option2 : '',
+                    option3 : '',
+                    option4 : '',
                     answer : '',
-                    keywords : []
+                    parentCategory : '',
+                    level : 1,
+                    category : '',
+                    adminEmail : ''
                 },
-                selected : 'Select a option',
                 isOptionsEntered : false,
-                categories : [
-                    'Sports',
-                    'History'
-                ],
+                categories : [],
+                subcategories : [],
                 isLoading:false
             }
         },
       methods:{
-            addQuestion(){
+          addQuestion(){
                 //TODO validate input
                 if(!this.validateInput()){
-                    return
+                    console.log("Input validation " + this.validateInput());
+                    return;
+                }else{
+                   this.uploadQuestion();
                 }
-                this.isLoading = true;
-                firestore.collection("questions").add(this.questionModel).
-                    then( (ref)=>{
-                        alert("Question Written to " + ref.id);
-                        this.isLoading = false
-                }).catch( (error)=>{
-                    alert("Failed");
-                    this.isLoading = false
-                })
             },
-          validateInput(){
-                if(this.questionModel.question.length <1){
+          uploadQuestion(){
 
-                }
-          },
-          loadList(){
-                realtimedb.ref('/admin').child('categories').on('value',(snapshot)=>{
-                    console.log(snapshot.val());
-                    this.categories = snapshot.val();
-                },(error)=>{
-                    console.log(error);
-                })
-          }
-      },
-      created(){
-          if(firebase.auth().currentUser ===null){
-              this.$router.push({
-                  path :'/'
+              this.isLoading = true;
+              let url = baseURL;
+              url = url +  'addquestion?question=' +JSON.stringify(this.questionModel);
+              console.log(url);
+
+              var config = {
+                  headers: {'Access-Control-Allow-Origin': '*'}
+              };
+              this.$axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
+              this.$axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+              this.$axios.get(url ,({
+                  data : this.questionModel
+              }),config).then((res)=>{
+                  alert("Question Added");
+                  this.clearData();
+                  this.isLoading =false;
+              }).catch((err)=>{
+                  console.error(err);
+                  this.isLoading = false;
               })
-          }else{
-              this.loadList();
+          },
+          clearData(){
+              this.questionModel = {
+                      question :'',
+                      option1 : '',
+                      option2 : '',
+                      option3 : '',
+                      option4 : '',
+                      answer : '',
+                      parentCategory : this.questionModel.parentCategory,
+                      level : 1,
+                      category : this.questionModel.category,
+                      adminEmail :  ''
+              }
+          },
+          validateInput(){
+                if(this.questionModel.question.length===0 || this.questionModel.option1.length ===0
+                                        || this.questionModel.option2.length ===0
+                                        || this.questionModel.option3.length ===0
+                                        || this.questionModel.option4.length ===0
+                                        || this.questionModel.answer.length ===0 ) {
+                    alert('Enter all feilds');
+                    return false;
+                }
+                return true;
+          },
+          changeSubCategory(){
+              this.loadList(this.questionModel.parentCategory);
+          },
+          loadParentList() {
+              this.categories = [];
+              this.isLoading = true;
+
+              realtimedb.ref('categories').on('value', (snapshot) => {
+                  console.log(snapshot.val());
+                  this.categories = snapshot.val();
+                  this.isLoading = false;
+              }, (error) => {
+                  this.isLoading = false;
+                  console.log(error);
+              })
+          },
+          loadList(cat = "Sports"){
+                  realtimedb.ref('subcategories').child(cat).on('value',(snapshot)=>{
+                      console.log(snapshot.val());
+                      this.subcategories = snapshot.val();
+                      this.questionModel.category = this.subcategories[0];
+                      this.isLoading = false;
+                  },(error)=>{
+                      this.isLoading=false;
+                      console.log(error);
+                  })
           }
       },
+      mounted(){
+          this.loadParentList();
+          if(firebase.auth().currentUser ===null){
+                if(localStorage.getItem('useremail') ==null) {
+                    this.$router.push({
+                        path: '/'
+                    })
+                }else{
+                    this.questionModel.adminEmail = localStorage.getItem("useremail");
+                    console.log("Email " + this.questionModel.adminEmail);
+                }
+          }
+      },
+      watch : {
+            categories() {
+                this.questionModel.parentCategory = this.categories[0];
+                this.loadList(this.questionModel.parentCategory);
+            },
+          questionModel(){
+              this.questionModel.adminEmail = localStorage.getItem("useremail");
+              console.log('updated');
+          }
+      }
     }
 </script>
 

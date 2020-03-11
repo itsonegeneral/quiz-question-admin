@@ -16,7 +16,9 @@ export default {
     ],
     script:[
       {
-        src: 'https://www.gstatic.com/firebasejs/7.7.0npm /firebase-app.js'
+        src: 'https://www.gstatic.com/firebasejs/7.7.0npm /firebase-app.js',
+      },{
+        src: 'https://sdk.amazonaws.com/js/aws-sdk-2.1.34.min.js'
       }
     ]
   },
@@ -54,6 +56,8 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    //baseURL: 'https://node-server-quiz.herokuapp.com/',
+    //baseUrl: 'https://127.0.0,1:8080/'
   },
   /*
   ** Build configuration
