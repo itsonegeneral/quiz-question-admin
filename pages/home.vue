@@ -2,17 +2,26 @@
     <div class="container">
       <b-col class="col-sm-12 col-md-10">
 
-        <h5 class="text-center">Statistics</h5>
+          <h5 class="text-center">Statistics</h5>
+          <b-card class=" card col-sm-12 col-md-5 align-content-center">
+            <b-table :items="userdata.data">
+              <b-row v-for="obj in userdata.data">
+                <b-td>  {{obj.category}}</b-td>
+                <b-td> {{obj['count(*)']}}</b-td>
+              </b-row>
+            </b-table>
+          </b-card>
+
+
+        <h5 class="text-center">Admins</h5>
         <b-card class=" card col-sm-12 col-md-5 align-content-center">
-          <b-table :items="userdata.data">
-            <b-row v-for="obj in userdata.data">
+          <b-table :items="adminData.data">
+            <b-row v-for="obj in adminData.data">
               <b-td>  {{obj.category}}</b-td>
               <b-td> {{obj['count(*)']}}</b-td>
             </b-row>
           </b-table>
         </b-card>
-
-
 
 
       </b-col>
@@ -29,7 +38,8 @@
         data(){
             return{
                 userdata: '',
-                catData : []
+                catData : [],
+                adminData : []
             }
         },
         methods:{
@@ -49,7 +59,15 @@
                     console.log('err');
                     console.error(err);
                 })
+
+                this.$axios.get(baseURL + 'adminstatus').then((res)=>{
+                    this.adminData = res;
+                }).catch((err)=>{
+
+                });
+
             }
+
         },
         mounted() {
             this.loadData();
