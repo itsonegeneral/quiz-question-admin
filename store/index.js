@@ -11,3 +11,4 @@ export const store = new Vuex.Store({
 });
 
 export const baseURL = 'https://node-server-quiz.herokuapp.com/';
+export  const  testURL = 'http://localhost:8080/';

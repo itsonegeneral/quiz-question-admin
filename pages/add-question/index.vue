@@ -8,7 +8,7 @@
         <b-form @submit.prevent="addQuestion">
           Parent Category : {{questionModel.parentCategory}}<br>
           Sub Category : {{questionModel.category}}
-            <b-form-select v-model="questionModel.parentCategory" :options="categories"  class="mb-3" :value="categories" v-on:change="changeSubCategory()"/>
+            <b-form-select v-model="questionModel.parentCategory" class="mb-3"  :options="categories" :value="categories" v-on:change="changeSubCategory()"/>
           <b-form-select v-model="questionModel.category" :options="subcategories"  class="mb-3" :value="subcategories"/>
           <b-textarea placeholder="Question" v-model="questionModel.question"/>
             <b-input v-model="questionModel.option1" placeholder="Option 1"/>
@@ -139,6 +139,16 @@
                   this.isLoading = false;
                   console.log(error);
               })
+            /*  this.$axios.get(baseURL + 'getcategories').then((res)=>{
+                  console.log(res.data.parentCategories);
+                  for (let i=0 ;i <res.data.parentCategories.length ; i ++){
+                      this.categories.push(res.data.parentCategories[i].categoryName);
+                  }
+                  this.isLoading = false;
+              }).catch((err)=>{
+                  this.isLoading = false;
+              });
+*/
           },
           loadList(cat = "Sports"){
                   realtimedb.ref('subcategories').child(cat).on('value',(snapshot)=>{
@@ -150,6 +160,23 @@
                       this.isLoading=false;
                       console.log(error);
                   })
+/*
+
+              this.$axios.get(baseURL + 'getcategories').then((res)=>{
+                  console.log(res.data.categories);
+                  this.subcategories = [];
+                  this.questionModel.category = res.data.categories[i].categoryName;
+                  for (let i=0 ;i <res.data.categories.length ; i ++){
+                      if(res.data.categories[i].parentCategory === cat) {
+                          this.subcategories.push(res.data.categories[i].categoryName);
+                      }
+                  }
+                  this.isLoading = false;
+              }).catch((err)=>{
+                  this.isLoading = false;
+              });
+*/
+
           }
       },
       mounted(){
