@@ -5,7 +5,7 @@
         <h5>Create New Quiz Option</h5>
         {{quizoption}}
         <b-form>
-          Select Category <b-select class="col-md-3 col-sm-12" />
+          Select Category <b-form-select class="col-md-3 col-sm-12" :options="categories" item-text="categoryName" item-value='id'label-field="Select Category" v-model="quizoption.catid"></b-form-select>
           <section>
             <b-input placeholder="Quiz Title" class="col-md-7 col-sm-12" v-model="quizoption.title"/>
             <b-textarea placeholder="Description" style="display: inline-block" v-model="quizoption.description" class="col-md-7 col-sm-12"/>
@@ -71,9 +71,23 @@
                 categories  : []
             }
         },
+      methods:{
+          uploadData(){
+              
+          }
+      },
         mounted() {
-            this.$axios.get(testURL + 'getallcategories' ).then((res)=>{
-                console.log(res);
+            this.categories = [];
+            this.$axios.get(testURL + 'getsubcategories' ).then((res)=>{
+                console.log(res.data);
+                for(let i= 0 ; i<res.data.data.length ; i++){
+                    let option = {
+                        value: res.data.data[i].id,
+                        text : res.data.data[i].categoryName
+                    };
+                    this.categories.push(option);
+                }
+                console.log(Object.values(res.data.data));
             }).catch((err)=>{
                 console.error(err);
             })
