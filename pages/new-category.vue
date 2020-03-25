@@ -4,7 +4,7 @@
       <b-card class="main-card">
         <h5>Create New Quiz Option</h5>
         {{quizoption}}
-        <b-form>
+        <b-form @submit.prevent="uploadData">
           Select Category <b-form-select class="col-md-3 col-sm-12" :options="categories" item-text="categoryName" item-value='id'label-field="Select Category" v-model="quizoption.catid"></b-form-select>
           <section>
             <b-input placeholder="Quiz Title" class="col-md-7 col-sm-12" v-model="quizoption.title"/>
@@ -40,7 +40,7 @@
               <b-input v-model="quizoption.difficulty" class="number-input col-md-4 col-sm-12" type="number" min="0" max="3" placeholder="1-3"/>
             </span>
           </div>
-          <b-button>Add Option</b-button>
+          <b-button type="submit">Add Option</b-button>
 
         </b-form>
 
@@ -73,13 +73,18 @@
         },
       methods:{
           uploadData(){
-              
+              let url = testURL + 'addquizoption?option=' +JSON.stringify(this.quizoption);
+              this.$axios.get(url).then((res)=>{
+                  console.log('Added');
+              }).catch((err)=>{
+                 alert('Error Adding')
+              });
+
           }
       },
         mounted() {
             this.categories = [];
             this.$axios.get(testURL + 'getsubcategories' ).then((res)=>{
-                console.log(res.data);
                 for(let i= 0 ; i<res.data.data.length ; i++){
                     let option = {
                         value: res.data.data[i].id,
