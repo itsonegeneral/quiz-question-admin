@@ -6,7 +6,7 @@
 
 <script>
     export default {
-        name: "login-again"
+        name: "index"
     }
 </script>
 

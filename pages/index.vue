@@ -1,11 +1,18 @@
 <template>
   <div class="container">
     <b-card >
+      <b-alert show  variant="warning" v-if="isError">Login Failed</b-alert>
       <b-card-body >
+        ADMIN LOGIN
         <b-form @submit.prevent="login">
             <b-input v-model="email" class="col-sm-12" id="inline-form-input-username" placeholder="Username"></b-input>
           <b-input v-model="password" type="password" id="text-password" placeholder="Password" aria-describedby="password-help-block"></b-input>
-          <b-button type="submit" class="col-sm-12">Login</b-button>
+          <b-spinner
+            v-if="isLoading"
+            variant="success"
+            label="Spinning"
+          ></b-spinner>
+          <b-button v-else type="submit" class="col-sm-12">Login</b-button>
         </b-form>
       </b-card-body>
     </b-card>
@@ -24,18 +31,23 @@ export default {
       return{
           email:'',
           password :'',
-          isLoading : false
+          isLoading : false,
+          isError: false
       }
     },
     methods:{
       login(){
+          this.isLoading = true;
+          this.isError = false;
           firebase.auth().signInWithEmailAndPassword(this.email,this.password).then((result)=>{
+              this.isLoading = false;
               this.$router.push({
                   name:'add-question'
               });
               localStorage.setItem('useremail',this.email);
           }).catch((result)=>{
-              alert("Failed")
+              this.isLoading = false;
+              this.isError = true;
           });
       }
     },
