@@ -1,40 +1,66 @@
 <template>
   <div>
-
-  <b-navbar type="dark" variant="dark">
-    <b-navbar-nav>
-      <b-nav-item href="#">Quiz Admin</b-nav-item>
-      <b-nav-item-dropdown text="Lang" right>
-        <b-dropdown-item href="#">EN</b-dropdown-item>
-        <b-dropdown-item href="#">ES</b-dropdown-item>
-        <b-dropdown-item href="#">RU</b-dropdown-item>
-        <b-dropdown-item href="#">FA</b-dropdown-item>
-      </b-nav-item-dropdown>
-      <b-nav-item-dropdown :text="useremail">
-        <b-dropdown-item href="#">Account</b-dropdown-item>
-        <b-dropdown-item href="#">Settings</b-dropdown-item>
-      </b-nav-item-dropdown>
-
-
-    </b-navbar-nav>
-  </b-navbar>
-</div>
+    <b-navbar type="dark" variant="dark">
+      <b-navbar-nav>
+        <b-nav-item href="#">Quiz Admin</b-nav-item>
+        <b-nav-item-dropdown text="Lang" right>
+          <b-dropdown-item href="#">EN</b-dropdown-item>
+          <b-dropdown-item href="#">ES</b-dropdown-item>
+          <b-dropdown-item href="#">RU</b-dropdown-item>
+          <b-dropdown-item href="#">FA</b-dropdown-item>
+        </b-nav-item-dropdown>
+        <b-nav-item-dropdown v-if="loggedIn"  :text="useremail">
+          <b-dropdown-item href="#">Account</b-dropdown-item>
+          <b-dropdown-item href="#">Settings</b-dropdown-item>
+          <b-dropdown-item v-on:click="logout">Logout</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </b-navbar>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "AppHeader",
-        data(){
-            return{
-                useremail :''
-            }
-        },
-        mounted() {
-            this.useremail = localStorage.getItem("useremail");
-        }
+import firebase from "firebase";
+export default {
+  name: "AppHeader",
+  data() {
+    return {
+      useremail: "",
+      loggedIn: false
+    };
+  },
+  methods: {
+    logout() {
+      firebase.auth().signOut();
+      localStorage.setItem("useremail", null);
+
+    },
+    initData() {
+      this.useremail = localStorage.getItem("useremail");
+    },
+    loginPage() {
+      this.$router.replace({
+        path: "/"
+      });
     }
+  },
+  mounted() {
+    this.initData();
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.loggedIn = true;
+        this.initData();
+      } else {
+        this.loggedIn = false;
+        this.initData();
+        this.$router.replace({
+          path: "/"
+        });
+      }
+    });
+  }
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

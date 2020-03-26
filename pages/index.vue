@@ -40,8 +40,12 @@ export default {
       }
     },
     created() {
-        firebase.auth().onAuthStateChanged(()=> {
-            this.$route.push('/add-question');
+        firebase.auth().onAuthStateChanged((user)=> {
+            if(user){
+                this.$router.push({
+                    name: "home"
+                });
+            }
         })
     }
 }
