@@ -101,9 +101,11 @@
 <script>
 import { baseURL, testURL } from "../../store";
 import firebase from 'firebase';
+import {myMixin} from "../../middleware/mixins";
 
 export default {
   name: "new-category",
+    mixins:[myMixin],
   data() {
     return {
       isLoading: true,
@@ -170,18 +172,6 @@ export default {
         this.isLoading = false;
         console.error(err);
       });
-
-    firebase.auth().onAuthStateChanged((user)=>{
-        if(user){
-            alert('Logged in user');
-        }else{
-            alert('Please sign in');
-            this.$router.push({
-                path: "/"
-            });
-        }
-    });
-
 
   }
 };

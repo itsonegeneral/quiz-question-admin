@@ -78,9 +78,11 @@
 import { firestore, realtimedb } from "../../plugins/firebase";
 import firebase from "firebase";
 import { baseURL, store } from "../../store";
+import {myMixin} from "../../middleware/mixins";
 
 export default {
   name: "add-question",
+    mixins:[myMixin],
   data() {
     return {
       currentDatabase: "",
@@ -237,7 +239,17 @@ export default {
   },
   mounted() {
     this.loadParentList();
-    if (firebase.auth().currentUser === null) {
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.questionModel.adminEmail = user.email;
+      } else {
+        this.$router.replace({
+          path: "/"
+        });
+      }
+    });
+    /* if (firebase.auth().currentUser === null) {
       if (localStorage.getItem("useremail") == null) {
         this.$router.push({
           path: "/"
@@ -246,7 +258,7 @@ export default {
         this.questionModel.adminEmail = localStorage.getItem("useremail");
         console.log("Email " + this.questionModel.adminEmail);
       }
-    }
+    }*/
   },
   watch: {
     categories() {
