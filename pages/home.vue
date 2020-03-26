@@ -15,6 +15,7 @@
           >Add Question</b-button
           >
           <b-button
+            v-on:click="$router.replace({name:'view-questions'})"
             style="margin-top: 20px;"
             class="col-sm-12  bottom-button"
           >View All Questions</b-button

@@ -156,7 +156,7 @@ export default {
   mounted() {
     this.categories = [];
     this.$axios
-      .get(testURL + "getsubcategories")
+      .get(baseURL + "getsubcategories")
       .then(res => {
         this.isLoading = false;
         for (let i = 0; i < res.data.data.length; i++) {

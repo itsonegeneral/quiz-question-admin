@@ -2,7 +2,7 @@
   <div style="" class="align-self-center">
     <b-col class="col-sm-12 col-md-12" style="display: inline-block;">
       <b-card-text style="text-align: center">Questions</b-card-text>
-      <b-card class="col-sm-12 col-md-7" v-for="question in questions">
+      <b-card class="col-sm-12 col-md-7" v-for="question in questions" style="margin-bottom: 7px">
           <b>{{ question.id }}</b>
         <div class="d-inline-block" style="margin-left: 10px">
           {{ question.question }}
@@ -41,9 +41,8 @@ export default {
     loadData() {
       let email = firebase.auth().currentUser.email;
 
-      //TODO swap url
 
-      let url = testURL + "getadminquestions?email=" + email;
+      let url = baseURL + "getadminquestions?email=" + email;
       console.log(url);
       this.$axios
         .get(url)
