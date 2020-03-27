@@ -3,21 +3,22 @@
     <b-col class="col-sm-12 col-md-12" style="display: inline-block;">
       <b-card-text style="text-align: center">Questions</b-card-text>
       <b-card class="col-sm-12 col-md-7" v-for="question in questions" style="margin-bottom: 7px">
+          <p>Category : {{question.category}}</p>
           <b>{{ question.id }}</b>
         <div class="d-inline-block" style="margin-left: 10px">
           {{ question.question }}
           <table  class="">
             <tr>
-              <td>1.{{ question.option1 }}</td>
-              <td>3.{{ question.option3 }}</td>
+              <td>1) {{ question.option1 }}</td>
+              <td>3) {{ question.option3 }}</td>
             </tr>
             <tr>
-              <td>2.{{ question.option2 }}</td>
-              <td>4.{{ question.option4 }}</td>
+              <td>2) {{ question.option2 }}</td>
+              <td>4) {{ question.option4 }}</td>
             </tr>
           </table>
         </div>
-        <img class="btn-outline-warning float-right" src="https://ya-webdesign.com/images600_/edit-delete-icon-png-4.png">
+        <img v-on:click="deleteQuestion(question.id)" class="btn-outline-warning float-right" src="https://ya-webdesign.com/images600_/edit-delete-icon-png-4.png">
 
       </b-card>
     </b-col>
@@ -51,7 +52,25 @@ export default {
           this.questions = res.data.data;
         })
         .catch(err => {});
-    }
+    },
+      deleteQuestion(id){
+
+          let url = baseURL + "deletequestion?id=" + id;
+          console.log(url);
+          this.$axios
+              .get(url)
+              .then(res => {
+                  if(res.data.status === 'success'){
+                      alert('Question deleted')
+                      this.loadData();
+                  }else{
+                      alert('Failed')
+                  }
+              })
+              .catch(err => {
+                  alert('Failed')
+              });
+      }
   },
   mounted() {
     setTimeout(() => {
