@@ -128,7 +128,7 @@ export default {
           return;
       }
       let url =
-        testURL + "addquizoption?option=" + JSON.stringify(this.quizoption);
+        baseURL + "addquizoption?option=" + JSON.stringify(this.quizoption);
       this.$axios
         .get(url)
         .then(res => {
